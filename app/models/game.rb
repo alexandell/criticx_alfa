@@ -6,5 +6,18 @@ class Game < ApplicationRecord
     has_many :expansions, class_name: "Game", foreign_key: "parent_id"
     belongs_to :parent, class_name: "Game", optional: true
     has_many :reviews, as: :reviewable
-    enum category: { main_game: 0, expansion: 1 } 
+    enum category: { main_game: 0, expansion: 1 }
+    validates :name, presence: true, uniqueness: true
+    validates :category, presence: true
+    validates :rating, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
+    validate :validate_parent_exist_if_expansion
+
+    private 
+    def validate_parent_exist_if_expansion
+        if category == "expansion"
+            if parent.nil?
+                errors.add(:parent, "Parent must be provided if expansion")
+            end
+        end
+    end
 end
