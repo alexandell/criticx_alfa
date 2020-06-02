@@ -33,8 +33,14 @@ class GamesController < ApplicationController
     end
   end
 
+  def destroy
+    game = Game.find(params[:id])
+    game.destroy
+    redirect_to games_path
+  end
+
   private
   def game_params
-    params.raquire(:game).permit(:name, :summary, :release_date, :category, :rating, :parent_id)
+    params.require(:game).permit(:name, :summary, :release_date, :category, :rating, :parent_id)
   end
 end
